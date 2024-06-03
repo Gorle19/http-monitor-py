@@ -277,7 +277,7 @@ BPF.attach_raw_socket(function_tcp_matching, '')
 
 print('The program is running. Press Ctrl-C to stop. \n')
 
-print("TIME \t\t\t INTERFACE \t PROTOCOL \t SOURCE IP \t SOURCE PORT \t DESTINATION IP \t DESTINATION PORT \t PAYLOAD")
+print("TIME \t\t\t INTERFACE \t\t PROTOCOL \t SOURCE IP \t SOURCE PORT \t DESTINATION IP \t DESTINATION PORT \t PAYLOAD")
 
 bpf_sock["tcp_events"].open_perf_buffer(print_data)
 
