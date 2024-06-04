@@ -89,7 +89,7 @@ struct port_val {
 };
 
 // eBPF table from which information about the process is extracted.
-// Filled when calling kernel functions udp_sendmsg()/tcp_sendmsg():
+// Filled when calling kernel functions tcp_sendmsg():
 BPF_TABLE("extern", struct port_key, struct port_val, proc_ports, 20480);
 
 // table for transmitting data to the user space:
