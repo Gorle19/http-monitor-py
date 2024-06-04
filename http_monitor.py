@@ -236,27 +236,27 @@ def print_data(cpu, data, size):
     # Check GET Request (71=G, 69=E, 84=T)
     if pkt[0]==71 and pkt[1]==69 and pkt[2]==84:
         payload = "HTTP GET Request"
-        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        print(f'{ts} \t {ifname} \t\t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
 
     # Check POST Request
     if pkt[0]==80 and pkt[1]==79 and pkt[1]==83 and pkt[2]==84:
         payload = "HTTP POST Request"
-        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        print(f'{ts} \t {ifname} \t\t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
 
     # Check PUT Request
     if pkt[0]==80 and pkt[1]==85 and pkt[2]==84:
         payload = "HTTP PUT Request"
-        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        print(f'{ts} \t {ifname} \t\t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
     
     # Check DELETE Request
     if pkt[0]==68 and pkt[1]==69 and pkt[2]==76 and pkt[3]==69 and pkt[2]==84 and pkt[5]==69:
         payload = "HTTP DELETE Request"
-        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        print(f'{ts} \t {ifname} \t\t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
 
     # Chech HTTP Response
     if pkt[0]==72 and pkt[1]==84 and pkt[2]==84 and pkt[3]==80:
         payload = "HTTP Response"
-        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        print(f'{ts} \t {ifname} \t\t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
     
 
     
@@ -277,7 +277,7 @@ BPF.attach_raw_socket(function_tcp_matching, '')
 
 print('The program is running. Press Ctrl-C to stop. \n')
 
-print("TIME \t\t\t INTERFACE \t\t PROTOCOL \t SOURCE IP \t SOURCE PORT \t DESTINATION IP \t DESTINATION PORT \t PAYLOAD")
+print("TIME \t\t\t INTERFACE \t PROTOCOL \t SOURCE IP \t SOURCE PORT \t DESTINATION IP \t DESTINATION PORT \t PAYLOAD")
 
 bpf_sock["tcp_events"].open_perf_buffer(print_data)
 
