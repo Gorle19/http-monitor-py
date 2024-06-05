@@ -52,8 +52,8 @@ int trace_tcp_sendmsg(struct pt_regs *ctx, struct sock *sk) {
     key.sport = sport;
     key.dport = htons(dport);
 
-    //if (key.dport == 80)
-        //bpf_trace_printk("TCP sendmsg: %d %d \n", key.sport, key.dport);
+    if (key.dport == 80)
+        bpf_trace_printk("TCP sendmsg: %d %d \n", key.sport, key.dport);
 
     //Form a structure with socket properties:
     struct port_val val = {};
@@ -80,14 +80,14 @@ int trace_tcp_recvmsg(struct pt_regs *ctx, struct sock *sk) {
 
     // Forming the structure-key.
     struct port_key key = {.proto = 6};
-    key.saddr = htonl(saddr);
-    key.daddr = htonl(daddr);
+    key.saddr = htonl(daddr);
+    key.daddr = htonl(saddr);
 
     key.sport = htons(dport);
     key.dport = sport;
 
-    //if (key.sport == 80)
-        //bpf_trace_printk("TCP recvmsg: %d %d \n", key.sport, key.dport);
+    if (key.sport == 80)
+        bpf_trace_printk("TCP recvmsg: %d %d\n", key.sport, key.dport);
 
     //Form a structure with socket properties:
     struct port_val val = {};
@@ -274,27 +274,27 @@ def print_data(cpu, data, size):
     # Check GET Request (71=G, 69=E, 84=T)
     if pkt[0]==71 and pkt[1]==69 and pkt[2]==84:
         payload = "HTTP GET Request"
-        print(f'{ts} \t {ifname} \t\t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
 
     # Check POST Request
     if pkt[0]==80 and pkt[1]==79 and pkt[1]==83 and pkt[2]==84:
         payload = "HTTP POST Request"
-        print(f'{ts} \t {ifname} \t\t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
 
     # Check PUT Request
     if pkt[0]==80 and pkt[1]==85 and pkt[2]==84:
         payload = "HTTP PUT Request"
-        print(f'{ts} \t {ifname} \t\t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
     
     # Check DELETE Request
     if pkt[0]==68 and pkt[1]==69 and pkt[2]==76 and pkt[3]==69 and pkt[2]==84 and pkt[5]==69:
         payload = "HTTP DELETE Request"
-        print(f'{ts} \t {ifname} \t\t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
 
     # Chech HTTP Response
     if pkt[0]==72 and pkt[1]==84 and pkt[2]==84 and pkt[3]==80:
         payload = "HTTP Response"
-        print(f'{ts} \t {ifname} \t\t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
     
 
     
@@ -302,9 +302,14 @@ def print_data(cpu, data, size):
 # Main
 
 # BPF initialization:
-bpf_kprobe = BPF(text=C_BPF_KPROBE)
+file1 = open("kprobe.bpf.c", "r")
+bpf_kprobe = BPF(text=file1.read())
+file1.close()
 
-bpf_sock = BPF(text=BPF_SOCK_TEXT)
+file2 = open("sock.bpf.c", "r")
+bpf_sock = BPF(text=file2.read())
+file2.close()
+
 
 # Attach TCP kprobe:
 bpf_kprobe.attach_kprobe(event="tcp_sendmsg", fn_name="trace_tcp_sendmsg")
