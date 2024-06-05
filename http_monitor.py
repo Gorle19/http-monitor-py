@@ -2,7 +2,6 @@
 
 from struct import unpack
 import sys
-import time
 from bcc import BPF
 from socket import if_indextoname
 
@@ -288,5 +287,4 @@ while True:
         bpf_sock.perf_buffer_poll()
     except KeyboardInterrupt:
         bpf_kprobe.detach_kprobe(event="tcp_sendmsg")
-        time.sleep(1)
         sys.exit(0)
