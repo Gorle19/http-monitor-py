@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from struct import unpack
-import sys
 from bcc import BPF
 from socket import if_indextoname
 
@@ -282,9 +281,9 @@ print("TIME \t\t\t INTERFACE \t PROTOCOL \t SOURCE IP \t SOURCE PORT \t DESTINAT
 
 bpf_sock["tcp_events"].open_perf_buffer(print_data)
 
-try:
-    while True:
+while True:
+    try:
         bpf_sock.perf_buffer_poll()
-except KeyboardInterrupt:
+    except KeyboardInterrupt:
         bpf_kprobe.detach_kprobe(event="tcp_sendmsg")
         exit()
