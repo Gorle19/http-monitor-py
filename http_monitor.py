@@ -302,13 +302,9 @@ def print_data(cpu, data, size):
 # Main
 
 # BPF initialization:
-file1 = open("kprobe.bpf.c", "r")
-bpf_kprobe = BPF(text=file1.read())
-file1.close()
+bpf_kprobe = BPF(text=C_BPF_KPROBE)
 
-file2 = open("sock.bpf.c", "r")
-bpf_sock = BPF(text=file2.read())
-file2.close()
+bpf_sock = BPF(text=BPF_SOCK_TEXT)
 
 
 # Attach TCP kprobe:
