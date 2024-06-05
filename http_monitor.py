@@ -286,4 +286,3 @@ while True:
         bpf_sock.perf_buffer_poll()
     except KeyboardInterrupt:
         bpf_kprobe.detach_kprobe(event="tcp_sendmsg")
-        exit()
