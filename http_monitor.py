@@ -282,9 +282,9 @@ print("TIME \t\t\t INTERFACE \t PROTOCOL \t SOURCE IP \t SOURCE PORT \t DESTINAT
 
 bpf_sock["tcp_events"].open_perf_buffer(print_data)
 
-while True:
-    try:
+try:
+    while True:
         bpf_sock.perf_buffer_poll()
-    except KeyboardInterrupt:
+except KeyboardInterrupt:
         bpf_kprobe.detach_kprobe(event="tcp_sendmsg")
         sys.exit()
