@@ -52,9 +52,6 @@ int trace_tcp_sendmsg(struct pt_regs *ctx, struct sock *sk) {
     key.sport = sport;
     key.dport = htons(dport);
 
-    //if (key.dport == 80)
-        //bpf_trace_printk("TCP sendmsg: %d %d \n", key.sport, key.dport);
-
     //Form a structure with socket properties:
     struct port_val val = {};
     val.pid = pid_tgid >> 32;
@@ -85,9 +82,6 @@ int trace_tcp_recvmsg(struct pt_regs *ctx, struct sock *sk) {
 
     key.sport = htons(dport);
     key.dport = sport;
-
-    //if (key.sport == 80)
-        //bpf_trace_printk("TCP recvmsg: %d %d\n", key.sport, key.dport);
 
     //Form a structure with socket properties:
     struct port_val val = {};
