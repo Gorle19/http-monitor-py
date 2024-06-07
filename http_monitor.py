@@ -267,28 +267,28 @@ def print_data(cpu, data, size):
 
     # Check GET Request (71=G, 69=E, 84=T)
     if pkt[0]==71 and pkt[1]==69 and pkt[2]==84:
-        payload = "HTTP GET Request"
-        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        type = "HTTP GET Request"
+        print(f'{ts} \t {ifname} \t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {pkt.__len__()} \t\t {type} \t {pkt[:15].decode("utf-8")}')
 
     # Check POST Request
     if pkt[0]==80 and pkt[1]==79 and pkt[1]==83 and pkt[2]==84:
-        payload = "HTTP POST Request"
-        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        type = "HTTP POST Request"
+        print(f'{ts} \t {ifname} \t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {pkt.__len__()} \t\t {type} \t {pkt[:15].decode("utf-8")}')
 
     # Check PUT Request
     if pkt[0]==80 and pkt[1]==85 and pkt[2]==84:
-        payload = "HTTP PUT Request"
-        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
-    
+        type = "HTTP PUT Request"
+        print(f'{ts} \t {ifname} \t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {pkt.__len__()} \t\t {type} \t {pkt[:15].decode("utf-8")}')
+
     # Check DELETE Request
     if pkt[0]==68 and pkt[1]==69 and pkt[2]==76 and pkt[3]==69 and pkt[2]==84 and pkt[5]==69:
-        payload = "HTTP DELETE Request"
-        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        type = "HTTP DELETE Request"
+        print(f'{ts} \t {ifname} \t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {pkt.__len__()} \t\t {type} \t {pkt[:15].decode("utf-8")}')
 
     # Chech HTTP Response
     if pkt[0]==72 and pkt[1]==84 and pkt[2]==84 and pkt[3]==80:
-        payload = "HTTP Response"
-        print(f'{ts} \t {ifname} \t {proto} \t\t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {payload}')
+        type = "HTTP Response"
+        print(f'{ts} \t {ifname} \t {saddr} \t {sport} \t\t {daddr} \t\t {dport} \t\t\t {pkt.__len__()} \t\t {type} \t\t {pkt[:15].decode("utf-8")}')
     
 
     
@@ -296,9 +296,13 @@ def print_data(cpu, data, size):
 # Main
 
 # BPF initialization:
-bpf_kprobe = BPF(text=C_BPF_KPROBE)
+file1 = open("kprobe.bpf.c", "r")
+bpf_kprobe = BPF(text=file1.read())
+file1.close()
 
-bpf_sock = BPF(text=BPF_SOCK_TEXT)
+file2 = open("sock.bpf.c", "r")
+bpf_sock = BPF(text=file2.read())
+file2.close()
 
 
 # Attach TCP kprobe:
@@ -311,7 +315,7 @@ BPF.attach_raw_socket(function_tcp_matching, '')
 
 print('The program is running. Press Ctrl-C to stop. \n')
 
-print("TIME \t\t\t INTERFACE \t PROTOCOL \t SOURCE IP \t SOURCE PORT \t DESTINATION IP \t DESTINATION PORT \t PAYLOAD")
+print("TIME \t\t\t INTERFACE \t SOURCE IP \t SOURCE PORT \t DESTINATION IP \t DESTINATION PORT \t LENGHT \t TYPE \t\t\t PAYLOAD")
 
 bpf_sock["tcp_events"].open_perf_buffer(print_data)
 
